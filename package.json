@@ -33,7 +33,7 @@
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.12.1",
-    "mongoose": "^6.7.3",
+    "mongoose": "^6.7.4",
     "node": "^14.4.0"
   }
 }
