@@ -16,7 +16,7 @@ const app_1 = require("./app");
  */
 const server = app_1.default.listen(app_1.default.get('port'), () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, database_1.connectMongoDB)();
-    console.log('info', 'Auth service is running  at http://localhost:' + app_1.default.get('port'), '', '');
+    console.log('info', 'Auth service is running  at http://0.0.0.0:' + app_1.default.get('port'), '', '');
     /**
      * SCRIPT to create roles with verificationStatus
      *
