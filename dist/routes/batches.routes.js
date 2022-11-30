@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const batches_controller_1 = require("../controllers/batches.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const router = express.Router();
+const batchesController = new batches_controller_1.default();
+router.post("/", auth_middleware_1.default.checkIfBodyParamsExistBatchApi, batchesController.addBatch);
+router.get("/:batchId", batchesController.fetchBatch);
+router.put("/:batchId", batchesController.changeStatus);
+exports.default = router;
