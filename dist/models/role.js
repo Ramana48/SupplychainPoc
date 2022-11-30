@@ -8,7 +8,7 @@ exports.rolesSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    privileges: {
+    verificationStatus: {
         type: [String],
         enum: [privileges_enum_1.privilegeEums.PACKED, privileges_enum_1.privilegeEums.SHIPPED, privileges_enum_1.privilegeEums.INTRANSIT, privileges_enum_1.privilegeEums.RECEIVED, privileges_enum_1.privilegeEums.LOOKSGOOD, privileges_enum_1.privilegeEums.NOTGOOD, privileges_enum_1.privilegeEums.NOTRECEIVED, privileges_enum_1.privilegeEums.MISMATCHQUANTITY],
         default: [privileges_enum_1.privilegeEums.PACKED]

@@ -17,22 +17,31 @@ const app_1 = require("./app");
 const server = app_1.default.listen(app_1.default.get('port'), () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, database_1.connectMongoDB)();
     console.log('info', 'Auth service is running  at http://localhost:' + app_1.default.get('port'), '', '');
-    // const roles = [{
-    // 	name: 'Admin',
-    // 	privileges: [privilegeEums.PACKED, privilegeEums.SHIPPED, privilegeEums.INTRANSIT, privilegeEums.RECEIVED, privilegeEums.LOOKSGOOD, privilegeEums.NOTGOOD, privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
-    // }, {
-    // 	name: 'User',
-    // 	privileges: [privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
-    // }];
-    // const c = await Role.insertMany(roles);
-    // console.log('BBB:::', c);
-    //  const users = [{
-    // 	name: 'Ramana',
-    // 	roles: '637e2d37e2d0b82c6857fa84'
-    // }, {
-    // 	name: 'Pushkhar',
-    // 	roles: '637e2d37e2d0b82c6857fa85'
-    // }];
-    // const a = await User.insertMany(users);
+    /**
+     * SCRIPT to create roles with verificationStatus
+     *
+    const roles = [{
+        name: 'Admin',
+        verificationStatus: [privilegeEums.PACKED, privilegeEums.SHIPPED, privilegeEums.INTRANSIT, privilegeEums.RECEIVED, privilegeEums.LOOKSGOOD, privilegeEums.NOTGOOD, privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
+    }, {
+        name: 'User',
+        verificationStatus: [privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
+    }];
+
+    const c = await Role.insertMany(roles);
+    console.log('BBB:::', c);
+    */
+    /**
+     * SCRIPT to create users with roles into db
+     *
+     const users = [{
+        name: 'Ramana',
+        roles: '63848c9f3b92a55c7f40a0d4'
+    }, {
+        name: 'Pushkhar',
+        roles: '63848c9f3b92a55c7f40a0d5'
+    }];
+    const a = await User.insertMany(users);
+     */
 }));
 exports.default = server;

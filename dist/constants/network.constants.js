@@ -56,6 +56,7 @@ Network.SUCCESS_CODES = {
 Network.EXCEPTION_MESSAGES = {
     USER: {
         USER_LOGIN: "Exception while user login",
+        USER_NOT_FOUND: "User not found"
     },
     BATCH: {
         ADD_BATCH: "Exception while adding batch",

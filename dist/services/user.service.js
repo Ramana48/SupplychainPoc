@@ -29,7 +29,7 @@ class UserService {
                             localField: "roles",
                             foreignField: "_id",
                             pipeline: [
-                                { "$project": { "_id": 1, "name": 1, "privileges": 1 } }
+                                { "$project": { "_id": 1, "name": 1, "verificationStatus": 1 } }
                             ],
                             as: "role"
                         }
@@ -40,6 +40,17 @@ class UserService {
                         }
                     }
                 ]);
+                if (!user || user.length === 0) {
+                    utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.USER.USER_NOT_FOUND, {});
+                    return;
+                }
+                if (!user[0].role || user[0].role.length === 0) {
+                    return res.status(constants_1.default.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
+                        error: '5',
+                        message: 'Not a valid user',
+                        data: {},
+                    });
+                }
                 return user;
             }
             catch (error) {
