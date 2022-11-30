@@ -30,7 +30,7 @@ const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         // let dbUrl: any = process.env.DB_LOCAL_URL;
-        let dbUrl = "mongodb://localhost:27017/supplychain";
+        let dbUrl = "mongodb://mongodb:27017/supplychain";
         Mongoose.connect(dbUrl, mongoOptions);
         database = Mongoose.connection;
         database.on("open", () => __awaiter(void 0, void 0, void 0, function* () {

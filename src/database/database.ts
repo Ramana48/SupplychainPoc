@@ -24,7 +24,7 @@ export const connectMongoDB = async () => {
         }
         // let dbUrl: any = process.env.DB_LOCAL_URL;
 
-        let dbUrl: any = "mongodb://localhost:27017/supplychain";
+        let dbUrl: any = "mongodb://mongodb:27017/supplychain";
 
         Mongoose.connect(dbUrl, mongoOptions);
         database = Mongoose.connection;
