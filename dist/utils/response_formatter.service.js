@@ -31,11 +31,11 @@ class ResponseFormatter {
         });
     }
     static notFoundException(data, res) {
-        return res.status(constants_1.default.NETWORK.HTTP_STATUS_CODE.NotFound), {
+        return res.status(constants_1.default.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
             error: constants_1.default.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.code,
-            message: constants_1.default.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.message,
+            message: data.message,
             data: {},
-        };
+        });
     }
 }
 exports.default = ResponseFormatter;

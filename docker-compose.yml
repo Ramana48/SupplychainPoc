@@ -5,18 +5,18 @@ services:
     build: .
     depends_on:
       - mongodb
-    restart: unless-stopped
+    restart: always
     env_file: ./.env
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
   mongodb:
     image: mongo:5.0.2
-    restart: unless-stopped
+    restart: always
     env_file: ./.env
     ports:
       - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
     volumes:
-      - db:/data/db
+      - mongodb:/data/db
   
 
 volumes:

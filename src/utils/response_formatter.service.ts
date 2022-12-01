@@ -36,10 +36,11 @@ export default class ResponseFormatter {
     }
 
     public static notFoundException(data: DBExceptionInterface, res: any): ResponseInterface {
-        return res.status(Constants.NETWORK.HTTP_STATUS_CODE.NotFound), {
+        return res.status(Constants.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
             error: Constants.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.code,
-            message: Constants.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.message,
+            message: data.message,
             data: {},
-        };
+        });
     }
 }
+
