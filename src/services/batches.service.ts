@@ -129,7 +129,7 @@ export default class BatchesService {
 
             const apiResp = await axios.post(process.env.DEV_SERVER_HOST+'/updateBatch', apiInput, {
                 headers: {
-                  'user-role': user[0].role[0].name,
+                  'user-role': user[0].role[0].name.toLowerCase(),
                 }
             });
 

@@ -125,7 +125,7 @@ class BatchesService {
                 apiInput['_id'] = req.params.batchId;
                 const apiResp = yield axios.post(process.env.DEV_SERVER_HOST + '/updateBatch', apiInput, {
                     headers: {
-                        'user-role': user[0].role[0].name,
+                        'user-role': user[0].role[0].name.toLowerCase(),
                     }
                 });
                 if (!apiResp || apiResp === null || (apiResp === null || apiResp === void 0 ? void 0 : apiResp.status) != 200) {
