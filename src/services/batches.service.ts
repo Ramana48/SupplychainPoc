@@ -1,16 +1,43 @@
 import Constants from "../constants/constants";
 import UtilityService from "../utils/utility.service";
 import Batches from "../models/batches";
+import User from "../models/users";
+import { RoleEums } from "../enums/roles.enum";
 const ObjectId = require('mongodb').ObjectID;
+const axios = require('axios');
 
 export default class BatchesService {
 
     async addBatch(req, res) {
-        req.body['product'] = req.body.productId;
+        req.body['products'] = req.body.productId;
         delete req.body.productId;
         try {
-            return await Batches.insertMany([req.body]);
-        } catch (error) {            
+            const batchResp = await Batches.insertMany([req.body]);
+            console.log('batchResp Resp::', batchResp);
+
+            let apiInput = req.body;
+            apiInput['_id'] = batchResp[0]._id;
+            apiInput['comment'] = '';
+
+            console.log('apiInput Resp::', apiInput);
+
+            const apiResp = await axios.post(process.env.DEV_SERVER_HOST+'/createBatch', apiInput, {
+                headers: {
+                  'user-role': 'manufacturer',
+                }
+            });
+            console.log('API Resp::', apiResp);
+            if(!apiResp || apiResp === null || apiResp?.status != 200){
+                await Batches.deleteOne({_id: batchResp[0]._id});
+
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
+                return;
+            }
+            
+            return batchResp;
+        } catch (error) {
+            console.log('error Resp::', error);
+
             UtilityService.returnDbException(req, res, error.message, error);
             return;
         }
@@ -34,8 +61,7 @@ export default class BatchesService {
                     },
                     {
                         $match: {
-                            _id: ObjectId(req.params.batchId),
-                            isAllOkay: true
+                            _id: ObjectId(req.params.batchId)
                         }
                     }
                 ]);
@@ -55,6 +81,9 @@ export default class BatchesService {
         try {
             const input = req.body;
 
+            const previousBatch = await Batches.findById({_id:ObjectId(req.params.batchId)});
+            console.log('previousBatch::',previousBatch);
+
             const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
                 $set: input
             }, { new: true });
@@ -63,9 +92,88 @@ export default class BatchesService {
                 UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
                 return;
             }
+
+
+            let apiInput = req.body;
+            apiInput['_id'] = req.params.batchId;
+            apiInput['comment'] = '';
+
+            console.log('apiInput Resp::', apiInput);
+
+            const apiResp = await axios.post(process.env.DEV_SERVER_HOST+'/updateBatch', apiInput, {
+                headers: {
+                  'user-role': 'supplier',
+                }
+            });
+            console.log('API Resp::', apiResp);
+            if(!apiResp || apiResp === null || apiResp?.status != 200){
+                let apiInput = input;
+                Object.keys(apiInput).forEach(key => {
+                    if(previousBatch[key]){
+                        apiInput[key] = previousBatch[key];
+                    }
+                });
+                console.log('apiInput apiInput::', apiInput);
+
+                const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
+                    $set: apiInput
+                }, { new: true });
+       
+                console.log('updateupdateupdateupdate apiInput::', update);
+
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
+                return;
+            }
+
             return update;
         } catch (error) {
+            console.log('error::',error);
+            
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
+            return;
+        }
+    }
+
+    async fetchAllBatches(req, res) {
+        try {
+            const user = await User.aggregate(
+                [
+                    { $unwind: "$roles" },
+                    {
+                        $lookup: {
+                            from: "roles",
+                            localField: "roles",
+                            foreignField: "_id",
+                            pipeline: [
+                                { "$project": { "_id": 1, "name": 1, "verificationStatus": 1 } }
+                            ],
+                            as: "role"
+                        }
+                    },
+                    {
+                        $match: {
+                            _id: ObjectId(req.get('userId').toString())
+                        }
+                    }
+                ]
+            );
+
+            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.SUPPLIER) {
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
+                return;
+            }
+
+            const batches = await Batches.find({ isAllOkay: false });
+
+            if (!batches || batches === null || batches.length === 0) {
+                UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
+                return;
+            }
+            return batches;
+        } catch (error) {
+            console.log('error::', error);
+
+            UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.FETCH_ALL_BATCH, error);
             return;
         }
     }

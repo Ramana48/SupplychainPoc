@@ -50,5 +50,15 @@ class UtilityService {
             response_formatter_service_1.default.notFoundException(obj, res);
         });
     }
+    static returnBadRequestException(req, res, message, exception) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let obj = {
+                eventData: exception,
+                message: message,
+                requestId: "0",
+            };
+            response_formatter_service_1.default.badRequestException(obj, res);
+        });
+    }
 }
 exports.default = UtilityService;

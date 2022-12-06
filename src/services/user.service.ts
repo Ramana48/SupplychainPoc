@@ -34,6 +34,7 @@ export default class UserService {
                     }
                 ]
             );
+            console.log('user::',user);
 
             if (!user || user.length === 0) {
                 UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.USER.USER_NOT_FOUND, {});
@@ -47,7 +48,7 @@ export default class UserService {
                     data: {},
                 });
             }
-
+            
             return user;
         } catch (error) {
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.USER.USER_LOGIN, error);

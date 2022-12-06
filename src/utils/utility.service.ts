@@ -47,4 +47,13 @@ export default class UtilityService {
     };
     ResponseFormatter.notFoundException(obj, res);
   }
+
+  public static async returnBadRequestException(req: any, res: any, message: string, exception: any) {
+    let obj: DBExceptionInterface = {
+      eventData: exception,
+      message: message,
+      requestId: "0",
+    };
+    ResponseFormatter.badRequestException(obj, res);
+  }
 }

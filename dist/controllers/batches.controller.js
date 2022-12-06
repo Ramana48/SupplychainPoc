@@ -30,5 +30,14 @@ class BatchesController {
             return res.json(batches);
         });
     }
+    fetchBatches(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (req.get('userId').length === 0) {
+                return res.status(400).send({ code: 0, message: 'UserId value should not be empty', data: {} });
+            }
+            const batches = yield batchesService.fetchAllBatches(req, res);
+            return res.json(batches);
+        });
+    }
 }
 exports.default = BatchesController;

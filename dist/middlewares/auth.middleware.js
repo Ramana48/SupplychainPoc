@@ -58,5 +58,18 @@ class AuthenticatorMiddleware {
             res.status(400).json(response_formatter_service_1.default.getInvalidParameterResponse(errors));
         });
     }
+    static checkIfBodyParamsExistFetchProductsApi(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const errors = yield utility_service_1.default.validateRequest([
+                (0, express_validator_1.header)("userId")
+                    .exists()
+                    .withMessage(constants_1.default.NETWORK.VALUES.MISSING_REQUEST_PARAM)
+            ], req);
+            if (!errors.length) {
+                return next();
+            }
+            res.status(400).json(response_formatter_service_1.default.getInvalidParameterResponse(errors));
+        });
+    }
 }
 exports.default = AuthenticatorMiddleware;

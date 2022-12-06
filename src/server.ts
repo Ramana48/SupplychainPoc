@@ -10,7 +10,7 @@ import { privilegeEums } from './enums/privileges.enum';
 const server = app.listen(app.get('port'), async () => {
 
 	await connectMongoDB();
-	console.log('info', 'Auth service is running  at http://0.0.0.0:' + app.get('port'), '', '');
+	console.log('info', 'Auth service is running  at http://localhost:' + app.get('port'), '', '');
 
 	/**
 	 * SCRIPT to create roles with verificationStatus

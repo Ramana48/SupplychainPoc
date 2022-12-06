@@ -42,5 +42,12 @@ export default class ResponseFormatter {
             data: {},
         });
     }
-}
 
+    public static badRequestException(data: DBExceptionInterface, res: any): ResponseInterface {
+        return res.status(Constants.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
+            error: Constants.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.code,
+            message: data.message,
+            data: {},
+        });
+    }
+}

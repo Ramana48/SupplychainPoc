@@ -10,17 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants/constants");
-const users_1 = require("../models/users");
 const utility_service_1 = require("../utils/utility.service");
-class UserService {
-    userLogin(req, res) {
+const products_1 = require("../models/products");
+const users_1 = require("../models/users");
+const roles_enum_1 = require("../enums/roles.enum");
+const ObjectId = require('mongodb').ObjectID;
+class ProductsService {
+    fetchAllProducts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const userName = req.body.userName;
-                const password = req.body.password;
-                if (password != constants_1.default.NETWORK.PASSWORD) {
-                    return res.status(400).send({ message: 'Invalid password' });
-                }
                 const user = yield users_1.default.aggregate([
                     { $unwind: "$roles" },
                     {
@@ -36,29 +34,26 @@ class UserService {
                     },
                     {
                         $match: {
-                            name: userName
+                            _id: ObjectId(req.get('userId').toString())
                         }
                     }
                 ]);
-                console.log('user::', user);
-                if (!user || user.length === 0) {
-                    utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.USER.USER_NOT_FOUND, {});
+                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.SUPPLIER) {
+                    utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.PRODUCT.INVALID_ACCESS, {});
                     return;
                 }
-                if (!user[0].role || user[0].role.length === 0) {
-                    return res.status(constants_1.default.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
-                        error: '5',
-                        message: 'Not a valid user',
-                        data: {},
-                    });
+                const products = yield products_1.default.find({});
+                if (!products || products === null || products.length === 0) {
+                    utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.PRODUCT.PRODUCTS_NOT_FOUND, {});
+                    return;
                 }
-                return user;
+                return products;
             }
             catch (error) {
-                utility_service_1.default.returnDbException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.USER.USER_LOGIN, error);
+                utility_service_1.default.returnDbException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.PRODUCT.FETCH_PRODUCTS, error);
                 return;
             }
         });
     }
 }
-exports.default = UserService;
+exports.default = ProductsService;

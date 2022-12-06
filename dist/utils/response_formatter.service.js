@@ -37,5 +37,12 @@ class ResponseFormatter {
             data: {},
         });
     }
+    static badRequestException(data, res) {
+        return res.status(constants_1.default.NETWORK.HTTP_STATUS_CODE.BadRequest).send({
+            error: constants_1.default.NETWORK.ERROR_CODES.NOTFOUND_EXCEPTION.code,
+            message: data.message,
+            data: {},
+        });
+    }
 }
 exports.default = ResponseFormatter;

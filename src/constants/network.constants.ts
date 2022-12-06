@@ -16,6 +16,7 @@ export default class Network {
 
     static readonly VALUES = {
         MISSING_REQUEST_PARAM: "Required parameter is missing",
+        USER_ID_PARAM_VALUE: "UserId params value is missing",
     };
 
     static readonly ERROR_CODES = {
@@ -41,6 +42,10 @@ export default class Network {
             message: "NOT Found",
             code: "4",
         },
+        BAD_REQUEST_EXCEPTION: {
+            message: "Badrequest",
+            code: "4",
+        },
     }
 
     static readonly SUCCESS_CODES = {
@@ -63,6 +68,14 @@ export default class Network {
             FETCH_BATCH: "Exception while fetching batch",
             CHNAGE_STATUS: "Exception while changing status",
             BATCH_NOT_FOUND: "Batch not found",
+            FETCH_ALL_BATCH: "Exception while fetching batches",
+            INVALID_ACCESS: "Not authorised to access batches",
+            UNABLE_TO_PROCESS: "Unable to process batch transaction into blockchain",
+        },
+        PRODUCT: {
+            PRODUCTS_NOT_FOUND: "Products not found",
+            FETCH_PRODUCTS: "Exception while fetching products",
+            INVALID_ACCESS: "Not authorised to access products",
         }
     };
 
