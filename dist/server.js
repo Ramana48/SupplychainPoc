@@ -21,16 +21,37 @@ const server = app_1.default.listen(app_1.default.get('port'), () => __awaiter(v
      * SCRIPT to create roles with verificationStatus
      *
     const roles = [{
-        name: 'Admin',
-        verificationStatus: [privilegeEums.PACKED, privilegeEums.SHIPPED, privilegeEums.INTRANSIT, privilegeEums.RECEIVED, privilegeEums.LOOKSGOOD, privilegeEums.NOTGOOD, privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
+        name: RoleEums.SUPPLIER,
+        privileges: [privilegeEums.SUPPLIED]
     }, {
-        name: 'User',
-        verificationStatus: [privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
-    }];
+        name: RoleEums.MANUFACTURER,
+        privileges: [privilegeEums.MANUFACTUREDANDSHIPPED, privilegeEums.OTHER]
+    },
+    {
+        name: RoleEums.REGULATOR,
+        privileges: [privilegeEums.CHECKEDANDREGULATED,privilegeEums.OTHER]
+    },
+    {
+        name: RoleEums.LOGISTICS,
+        privileges: [privilegeEums.DSIPATCHEDANDINTRANSIT,privilegeEums.OTHER]
+    },
+    {
+        name: RoleEums.WHOLESALER,
+        privileges: [privilegeEums.RECEIVEDANDSTOCKED,privilegeEums.OTHER]
+    },
+    {
+        name: RoleEums.RETAILER,
+        privileges: [privilegeEums.CHECKEDANDVERIFIED,privilegeEums.OTHER]
+    },
+    {
+        name: RoleEums.CONSUMER,
+        privileges: [privilegeEums.CHECKEDANDBOUGHT,privilegeEums.OTHER]
+    }
+];
 
     const c = await Role.insertMany(roles);
     console.log('BBB:::', c);
-    */
+*/
     /**
      * SCRIPT to create users with roles into db
      *

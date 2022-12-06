@@ -1,31 +1,10 @@
-// export class Privileges {
-//     constructor() {
-//         this.privileges = Privileges.privilegeEums.PACKED;
-//     }
-
-//     privileges: Privileges.privilegeEums;
-// }
-
-// export namespace Privileges {
-//     export enum privilegeEums {
-//         PACKED = 'Packed',
-//         SHIPPED = 'Shipped',
-//         INTRANSIT = 'Intransit',
-//         RECEIVED = 'Received',
-//         LOOKSGOOD = 'LooksGood',
-//         NOTGOOD = 'NotGood',
-//         NOTRECEIVED = 'NotReceived',
-//         MISMATCHQUANTITY = 'MismatchQuantity'
-//     };
-// }
-
 export enum privilegeEums {
-    PACKED = 'Packed',
-    SHIPPED = 'Shipped',
-    INTRANSIT = 'Intransit',
-    RECEIVED = 'Received',
-    LOOKSGOOD = 'LooksGood',
-    NOTGOOD = 'NotGood',
-    NOTRECEIVED = 'NotReceived',
-    MISMATCHQUANTITY = 'MismatchQuantity'
+    SUPPLIED = 'supplied',
+    MANUFACTUREDANDSHIPPED = 'manufactured and shipped',
+    CHECKEDANDREGULATED = 'checked and regulated',
+    DSIPATCHEDANDINTRANSIT = 'dispatched and intransit',
+    RECEIVEDANDSTOCKED = 'received and stocked',
+    CHECKEDANDVERIFIED = 'checked and verified',
+    CHECKEDANDBOUGHT = 'checked and bought',
+    OTHER = 'other'
 };

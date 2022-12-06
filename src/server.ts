@@ -3,6 +3,7 @@ import app from './app';
 import Role from "./models/role";
 import User from "./models/users";
 import { privilegeEums } from './enums/privileges.enum';
+import { RoleEums } from "./enums/roles.enum";
 
 /**
  * Start Express server.
@@ -16,17 +17,37 @@ const server = app.listen(app.get('port'), async () => {
 	 * SCRIPT to create roles with verificationStatus
 	 *
 	const roles = [{
-		name: 'Admin',
-		verificationStatus: [privilegeEums.PACKED, privilegeEums.SHIPPED, privilegeEums.INTRANSIT, privilegeEums.RECEIVED, privilegeEums.LOOKSGOOD, privilegeEums.NOTGOOD, privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
+		name: RoleEums.SUPPLIER,
+		privileges: [privilegeEums.SUPPLIED]
 	}, {
-		name: 'User',
-		verificationStatus: [privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY]
-	}];
+		name: RoleEums.MANUFACTURER,
+		privileges: [privilegeEums.MANUFACTUREDANDSHIPPED, privilegeEums.OTHER]
+	},
+	{
+		name: RoleEums.REGULATOR,
+		privileges: [privilegeEums.CHECKEDANDREGULATED,privilegeEums.OTHER]
+	},
+	{
+		name: RoleEums.LOGISTICS,
+		privileges: [privilegeEums.DSIPATCHEDANDINTRANSIT,privilegeEums.OTHER]
+	},
+	{
+		name: RoleEums.WHOLESALER,
+		privileges: [privilegeEums.RECEIVEDANDSTOCKED,privilegeEums.OTHER]
+	},
+	{
+		name: RoleEums.RETAILER,
+		privileges: [privilegeEums.CHECKEDANDVERIFIED,privilegeEums.OTHER]
+	},
+	{
+		name: RoleEums.CONSUMER,
+		privileges: [privilegeEums.CHECKEDANDBOUGHT,privilegeEums.OTHER]
+	}
+];
 
 	const c = await Role.insertMany(roles);
 	console.log('BBB:::', c);
-	*/
-
+*/
 
 
 	/**

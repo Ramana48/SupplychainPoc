@@ -3,6 +3,7 @@ import UtilityService from "../utils/utility.service";
 import Batches from "../models/batches";
 import User from "../models/users";
 import { RoleEums } from "../enums/roles.enum";
+import { privilegeEums } from "../enums/privileges.enum";
 const ObjectId = require('mongodb').ObjectID;
 const axios = require('axios');
 
@@ -23,7 +24,7 @@ export default class BatchesService {
 
             const apiResp = await axios.post(process.env.DEV_SERVER_HOST+'/createBatch', apiInput, {
                 headers: {
-                  'user-role': 'manufacturer',
+                  'user-role': 'supplier',
                 }
             });
             console.log('API Resp::', apiResp);
@@ -79,10 +80,39 @@ export default class BatchesService {
 
     async changeStatus(req, res) {
         try {
+            const user = await User.aggregate(
+                [
+                    { $unwind: "$roles" },
+                    {
+                        $lookup: {
+                            from: "roles",
+                            localField: "roles",
+                            foreignField: "_id",
+                            pipeline: [
+                                { "$project": { "_id": 1, "name": 1, "privileges": 1 } }
+                            ],
+                            as: "role"
+                        }
+                    },
+                    {
+                        $match: {
+                            _id: ObjectId(req.get('userId').toString())
+                        }
+                    }
+                ]
+            );
+                
+            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.SUPPLIER) {
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
+                return;
+            }
+
             const input = req.body;
+            if(input.status.toLowerCase() != privilegeEums.OTHER){
+                input['comment'] = '';
+            }
 
             const previousBatch = await Batches.findById({_id:ObjectId(req.params.batchId)});
-            console.log('previousBatch::',previousBatch);
 
             const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
                 $set: input
@@ -93,19 +123,16 @@ export default class BatchesService {
                 return;
             }
 
-
             let apiInput = req.body;
             apiInput['_id'] = req.params.batchId;
-            apiInput['comment'] = '';
 
-            console.log('apiInput Resp::', apiInput);
 
             const apiResp = await axios.post(process.env.DEV_SERVER_HOST+'/updateBatch', apiInput, {
                 headers: {
-                  'user-role': 'supplier',
+                  'user-role': user[0].role[0].name,
                 }
             });
-            console.log('API Resp::', apiResp);
+
             if(!apiResp || apiResp === null || apiResp?.status != 200){
                 let apiInput = input;
                 Object.keys(apiInput).forEach(key => {
@@ -113,22 +140,18 @@ export default class BatchesService {
                         apiInput[key] = previousBatch[key];
                     }
                 });
-                console.log('apiInput apiInput::', apiInput);
 
                 const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
                     $set: apiInput
                 }, { new: true });
        
-                console.log('updateupdateupdateupdate apiInput::', update);
 
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
                 return;
             }
 
             return update;
-        } catch (error) {
-            console.log('error::',error);
-            
+        } catch (error) {            
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
             return;
         }
@@ -145,7 +168,7 @@ export default class BatchesService {
                             localField: "roles",
                             foreignField: "_id",
                             pipeline: [
-                                { "$project": { "_id": 1, "name": 1, "verificationStatus": 1 } }
+                                { "$project": { "_id": 1, "name": 1, "privileges": 1 } }
                             ],
                             as: "role"
                         }
@@ -171,8 +194,6 @@ export default class BatchesService {
             }
             return batches;
         } catch (error) {
-            console.log('error::', error);
-
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.FETCH_ALL_BATCH, error);
             return;
         }

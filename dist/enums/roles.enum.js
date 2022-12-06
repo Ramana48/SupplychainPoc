@@ -4,6 +4,11 @@ exports.RoleEums = void 0;
 var RoleEums;
 (function (RoleEums) {
     RoleEums["SUPPLIER"] = "Supplier";
-    RoleEums["DISTRIBUTOR"] = "Distribtor";
+    RoleEums["MANUFACTURER"] = "Manufacturer";
+    RoleEums["REGULATOR"] = "Regulator";
+    RoleEums["LOGISTICS"] = "Logistics";
+    RoleEums["WHOLESALER"] = "Wholesaler";
+    RoleEums["RETAILER"] = "Retailer";
+    RoleEums["CONSUMER"] = "Consumer";
 })(RoleEums = exports.RoleEums || (exports.RoleEums = {}));
 ;

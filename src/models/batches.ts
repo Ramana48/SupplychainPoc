@@ -31,6 +31,10 @@ export const batchesSchema: Schema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	comment: {
+		type: String,
+		default: ''
+	},
 	createdDate: {
 		type: Date,
 		default: Date.now

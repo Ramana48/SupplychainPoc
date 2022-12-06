@@ -33,6 +33,10 @@ exports.batchesSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false
     },
+    comment: {
+        type: String,
+        default: ''
+    },
     createdDate: {
         type: Date,
         default: Date.now

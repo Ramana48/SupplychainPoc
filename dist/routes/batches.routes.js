@@ -7,6 +7,6 @@ const router = express.Router();
 const batchesController = new batches_controller_1.default();
 router.post("/", auth_middleware_1.default.checkIfBodyParamsExistBatchApi, batchesController.addBatch);
 router.get("/:batchId", batchesController.fetchBatch);
-router.put("/:batchId", batchesController.changeStatus);
+router.put("/:batchId", auth_middleware_1.default.checkIfBodyParamsExistFetchProductsApi, batchesController.changeStatus);
 router.get("/", auth_middleware_1.default.checkIfBodyParamsExistFetchProductsApi, batchesController.fetchBatches);
 exports.default = router;

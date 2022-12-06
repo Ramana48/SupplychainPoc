@@ -6,10 +6,10 @@ export const rolesSchema: Schema = new Schema({
 		type: String,
 		required: true
 	},
-	verificationStatus: {
+	privileges: {
 		type: [String],
-		enum: [privilegeEums.PACKED, privilegeEums.SHIPPED, privilegeEums.INTRANSIT, privilegeEums.RECEIVED, privilegeEums.LOOKSGOOD, privilegeEums.NOTGOOD, privilegeEums.NOTRECEIVED, privilegeEums.MISMATCHQUANTITY],
-		default: [privilegeEums.PACKED]
+		enum: [privilegeEums.SUPPLIED, privilegeEums.MANUFACTUREDANDSHIPPED, privilegeEums.CHECKEDANDREGULATED, privilegeEums.DSIPATCHEDANDINTRANSIT, privilegeEums.RECEIVEDANDSTOCKED, privilegeEums.CHECKEDANDVERIFIED, privilegeEums.CHECKEDANDBOUGHT, privilegeEums.OTHER],
+		default: [privilegeEums.SUPPLIED]
 	},
 	createdDate: {
 		type: Date,
@@ -17,6 +17,6 @@ export const rolesSchema: Schema = new Schema({
 	}
 });
 
-const Role: Model<any> = model('role', rolesSchema);
+const Role: Model<any> = model('roles', rolesSchema);
 
 export default Role;

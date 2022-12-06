@@ -8,15 +8,15 @@ exports.rolesSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    verificationStatus: {
+    privileges: {
         type: [String],
-        enum: [privileges_enum_1.privilegeEums.PACKED, privileges_enum_1.privilegeEums.SHIPPED, privileges_enum_1.privilegeEums.INTRANSIT, privileges_enum_1.privilegeEums.RECEIVED, privileges_enum_1.privilegeEums.LOOKSGOOD, privileges_enum_1.privilegeEums.NOTGOOD, privileges_enum_1.privilegeEums.NOTRECEIVED, privileges_enum_1.privilegeEums.MISMATCHQUANTITY],
-        default: [privileges_enum_1.privilegeEums.PACKED]
+        enum: [privileges_enum_1.privilegeEums.SUPPLIED, privileges_enum_1.privilegeEums.MANUFACTUREDANDSHIPPED, privileges_enum_1.privilegeEums.CHECKEDANDREGULATED, privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT, privileges_enum_1.privilegeEums.RECEIVEDANDSTOCKED, privileges_enum_1.privilegeEums.CHECKEDANDVERIFIED, privileges_enum_1.privilegeEums.CHECKEDANDBOUGHT, privileges_enum_1.privilegeEums.OTHER],
+        default: [privileges_enum_1.privilegeEums.SUPPLIED]
     },
     createdDate: {
         type: Date,
         default: Date.now
     }
 });
-const Role = (0, mongoose_1.model)('role', exports.rolesSchema);
+const Role = (0, mongoose_1.model)('roles', exports.rolesSchema);
 exports.default = Role;

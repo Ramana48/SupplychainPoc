@@ -19,7 +19,7 @@ export default class ProductsService {
                             localField: "roles",
                             foreignField: "_id",
                             pipeline: [
-                                { "$project": { "_id": 1, "name": 1, "verificationStatus": 1 } }
+                                { "$project": { "_id": 1, "name": 1, "privileges": 1 } }
                             ],
                             as: "role"
                         }
