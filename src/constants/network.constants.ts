@@ -69,7 +69,7 @@ export default class Network {
             CHNAGE_STATUS: "Exception while changing status",
             BATCH_NOT_FOUND: "Batch not found",
             FETCH_ALL_BATCH: "Exception while fetching batches",
-            INVALID_ACCESS: "Not authorised to access batches",
+            INVALID_ACCESS: "Supplier not authorised to change the batch status",
             UNABLE_TO_PROCESS: "Unable to process batch transaction into blockchain",
         },
         PRODUCT: {
