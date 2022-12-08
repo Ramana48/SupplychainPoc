@@ -48,7 +48,7 @@ export default class BatchesService {
             if(isBatchExists || isBatchExists!=null){
                 let dbStatus = isBatchExists?.status?.split(" ").join("");
                 console.log('dbStarus::',dbStatus);
-                if(dbStatus != privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("")&&dbStatus!="rejected"){
+                if(dbStatus != privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("") || dbStatus!="rejected"){
                     UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
                     return;
                 }
