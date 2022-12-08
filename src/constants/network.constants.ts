@@ -73,7 +73,9 @@ export default class Network {
             UNABLE_TO_PROCESS: "Unable to process batch transaction into blockchain",
             BATCH_EXISTS: "This user has already initiated a batch for this product id",
             INVALID_USER: "Only manufacturer is authorised to add the product into batch",
-            BATCH_REJECTED:"This batch Id is already rejected by"
+            BATCH_REJECTED:"This batch Id is already rejected by",
+            BATCH_COMPLETED:"This batch Id is already deliver to the consumer"
+
         },
         PRODUCT: {
             PRODUCTS_NOT_FOUND: "Products not found",

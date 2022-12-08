@@ -118,6 +118,7 @@ class BatchesService {
         });
     }
     changeStatus(req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield users_1.default.aggregate([
@@ -152,6 +153,11 @@ class BatchesService {
                     input['rejectedByName'] = user[0].role[0].name;
                 }
                 const previousBatch = yield batches_1.default.findById({ _id: ObjectId(req.params.batchId) });
+                let dbStatus = (_a = previousBatch === null || previousBatch === void 0 ? void 0 : previousBatch.status) === null || _a === void 0 ? void 0 : _a.split(" ").join("");
+                if (dbStatus === privileges_enum_1.privilegeEums.CHECKEDANDBOUGHT.split(" ").join("")) {
+                    utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_COMPLETED, {});
+                    return;
+                }
                 if (previousBatch.status === "rejected") {
                     let rejectedby = previousBatch.rejectedByName;
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ", rejectedby), {});
