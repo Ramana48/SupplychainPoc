@@ -47,10 +47,10 @@ export default class BatchesService {
 
             if(isBatchExists || isBatchExists!=null){
                 let dbStatus = isBatchExists?.status?.split(" ").join("");
-                
+
                 if(dbStatus != "rejected"){
 
-                if(dbStatus != privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("")){
+                if(dbStatus != privilegeEums.CHECKEDANDBOUGHT.split(" ").join("")){
                     UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
                     return;
                 }
