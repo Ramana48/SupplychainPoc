@@ -37,6 +37,12 @@ exports.batchesSchema = new mongoose_1.Schema({
         type: String,
         default: ''
     },
+    rejectedById: {
+        type: String
+    },
+    rejectedByName: {
+        type: String
+    },
     createdDate: {
         type: Date,
         default: Date.now

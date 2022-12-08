@@ -38,7 +38,7 @@ class ProductsService {
                         }
                     }
                 ]);
-                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.SUPPLIER) {
+                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.MANUFACTURER) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.PRODUCT.INVALID_ACCESS, {});
                     return;
                 }

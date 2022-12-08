@@ -1,6 +1,6 @@
 export enum privilegeEums {
-    SUPPLIED = 'supplied',
     MANUFACTUREDANDSHIPPED = 'manufactured and shipped',
+    RECEIVED = 'received',
     CHECKEDANDREGULATED = 'checked and regulated',
     DSIPATCHEDANDINTRANSIT = 'dispatched and intransit',
     RECEIVEDANDSTOCKED = 'received and stocked',

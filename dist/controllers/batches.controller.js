@@ -42,5 +42,11 @@ class BatchesController {
             return res.json(batches);
         });
     }
+    fetchBatchByProduct(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const batches = yield batchesService.fetchBatchDetailsByProductId(req, res);
+            return res.json(batches);
+        });
+    }
 }
 exports.default = BatchesController;

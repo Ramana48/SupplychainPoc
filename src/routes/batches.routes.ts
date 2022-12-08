@@ -10,9 +10,11 @@ router.post("/", AuthenticatorMiddleware.checkIfBodyParamsExistBatchApi,
     batchesController.addBatch);
 router.get("/:batchId", batchesController.fetchBatch);
 router.put("/:batchId", AuthenticatorMiddleware.checkIfBodyParamsExistFetchProductsApi,
-batchesController.changeStatus);
+    batchesController.changeStatus);
 router.get("/", AuthenticatorMiddleware.checkIfBodyParamsExistFetchProductsApi,
-batchesController.fetchBatches);
+    batchesController.fetchBatches);
+router.get("/product/:productId", batchesController.fetchBatchByProduct);
+
 
 
 export default router;

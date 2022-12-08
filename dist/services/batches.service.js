@@ -19,22 +19,55 @@ const ObjectId = require('mongodb').ObjectID;
 const axios = require('axios');
 class BatchesService {
     addBatch(req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             req.body['products'] = req.body.productId;
             delete req.body.productId;
             try {
+                const user = yield users_1.default.aggregate([
+                    { $unwind: "$roles" },
+                    {
+                        $lookup: {
+                            from: "roles",
+                            localField: "roles",
+                            foreignField: "_id",
+                            pipeline: [
+                                { "$project": { "_id": 1, "name": 1, "privileges": 1 } }
+                            ],
+                            as: "role"
+                        }
+                    },
+                    {
+                        $match: {
+                            _id: ObjectId(req.body.userId)
+                        }
+                    }
+                ]);
+                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.MANUFACTURER) {
+                    utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_USER, {});
+                    return;
+                }
+                const isBatchExists = yield batches_1.default.findOne({
+                    userId: ObjectId(req.body.userId),
+                    products: ObjectId(req.body.products)
+                });
+                if (isBatchExists || isBatchExists != null) {
+                    let dbStatus = (_a = isBatchExists === null || isBatchExists === void 0 ? void 0 : isBatchExists.status) === null || _a === void 0 ? void 0 : _a.split(" ").join("");
+                    console.log('dbStarus::', dbStatus);
+                    if (dbStatus != privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("")) {
+                        utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
+                        return;
+                    }
+                }
                 const batchResp = yield batches_1.default.insertMany([req.body]);
-                console.log('batchResp Resp::', batchResp);
                 let apiInput = req.body;
                 apiInput['_id'] = batchResp[0]._id;
                 apiInput['comment'] = '';
-                console.log('apiInput Resp::', apiInput);
                 const apiResp = yield axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                     headers: {
                         'user-role': 'supplier',
                     }
                 });
-                console.log('API Resp::', apiResp);
                 if (!apiResp || apiResp === null || (apiResp === null || apiResp === void 0 ? void 0 : apiResp.status) != 200) {
                     yield batches_1.default.deleteOne({ _id: batchResp[0]._id });
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
@@ -105,13 +138,17 @@ class BatchesService {
                         }
                     }
                 ]);
-                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.SUPPLIER) {
+                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.MANUFACTURER) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                     return;
                 }
                 const input = req.body;
                 if (input.status.toLowerCase() != privileges_enum_1.privilegeEums.OTHER) {
                     input['comment'] = '';
+                }
+                if (input.status.toLowerCase() === 'rejected') {
+                    input['rejectedById'] = user[0]._id;
+                    input['rejectedByName'] = user[0].role[0].name;
                 }
                 const previousBatch = yield batches_1.default.findById({ _id: ObjectId(req.params.batchId) });
                 const update = yield batches_1.default.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
@@ -167,15 +204,18 @@ class BatchesService {
                     },
                     {
                         $match: {
-                            _id: ObjectId(req.get('userId').toString())
+                            _id: ObjectId(req.get('userId').toString()),
+                            status: {
+                                $ne: 'rejected'
+                            }
                         }
                     }
                 ]);
-                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.SUPPLIER) {
+                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.MANUFACTURER) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                     return;
                 }
-                const batches = yield batches_1.default.find({ isAllOkay: false });
+                const batches = yield batches_1.default.find({ isAllOkay: false, status: { $ne: 'rejected' } });
                 if (!batches || batches === null || batches.length === 0) {
                     utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
                     return;
@@ -184,6 +224,43 @@ class BatchesService {
             }
             catch (error) {
                 utility_service_1.default.returnDbException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.FETCH_ALL_BATCH, error);
+                return;
+            }
+        });
+    }
+    fetchBatchDetailsByProductId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const batchDetails = yield batches_1.default.aggregate([
+                    { $unwind: "$products" },
+                    {
+                        $lookup: {
+                            from: "products",
+                            localField: "products",
+                            foreignField: "_id",
+                            pipeline: [
+                                { "$project": { "_id": 1, "name": 1 } }
+                            ],
+                            as: "product"
+                        }
+                    },
+                    {
+                        $match: {
+                            products: ObjectId(req.params.productId),
+                            status: {
+                                $ne: 'rejected'
+                            }
+                        }
+                    }
+                ]);
+                if (!batchDetails || batchDetails === null || batchDetails.length === 0) {
+                    utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
+                    return;
+                }
+                return batchDetails;
+            }
+            catch (error) {
+                utility_service_1.default.returnDbException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
                 return;
             }
         });

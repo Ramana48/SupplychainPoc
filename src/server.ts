@@ -50,18 +50,25 @@ const server = app.listen(app.get('port'), async () => {
 */
 
 
-	/**
-	 * SCRIPT to create users with roles into db
-	 * 
-	 const users = [{
-		name: 'Ramana',
-		roles: '63848c9f3b92a55c7f40a0d4'
-	}, {
-		name: 'Pushkhar',
-		roles: '63848c9f3b92a55c7f40a0d5'
-	}];
-	const a = await User.insertMany(users);
-	 */
+	
+	//  const users = [{
+	// 	name: 'Shahid',
+	// 	roles: '638f404c046a0e078e653fef'
+	// }, {
+	// 	name: 'Amit',
+	// 	roles: '638f404c046a0e078e653ff0'
+	// },{
+	// 	name: 'Vikas',
+	// 	roles: '638f404c046a0e078e653ff1'
+	// },{
+	// 	name: 'Sai',
+	// 	roles: '638f404c046a0e078e653ff2'
+	// },{
+	// 	name: 'Jai',
+	// 	roles: '638f404c046a0e078e653ff3'
+	// }];
+	// const a = await User.insertMany(users);
+	 
 
 });
 

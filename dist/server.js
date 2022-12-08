@@ -52,17 +52,22 @@ const server = app_1.default.listen(app_1.default.get('port'), () => __awaiter(v
     const c = await Role.insertMany(roles);
     console.log('BBB:::', c);
 */
-    /**
-     * SCRIPT to create users with roles into db
-     *
-     const users = [{
-        name: 'Ramana',
-        roles: '63848c9f3b92a55c7f40a0d4'
-    }, {
-        name: 'Pushkhar',
-        roles: '63848c9f3b92a55c7f40a0d5'
-    }];
-    const a = await User.insertMany(users);
-     */
+    //  const users = [{
+    // 	name: 'Shahid',
+    // 	roles: '638f404c046a0e078e653fef'
+    // }, {
+    // 	name: 'Amit',
+    // 	roles: '638f404c046a0e078e653ff0'
+    // },{
+    // 	name: 'Vikas',
+    // 	roles: '638f404c046a0e078e653ff1'
+    // },{
+    // 	name: 'Sai',
+    // 	roles: '638f404c046a0e078e653ff2'
+    // },{
+    // 	name: 'Jai',
+    // 	roles: '638f404c046a0e078e653ff3'
+    // }];
+    // const a = await User.insertMany(users);
 }));
 exports.default = server;

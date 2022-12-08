@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleEums = void 0;
 var RoleEums;
 (function (RoleEums) {
-    RoleEums["SUPPLIER"] = "Supplier";
     RoleEums["MANUFACTURER"] = "Manufacturer";
+    RoleEums["BUILDER"] = "Builder";
     RoleEums["REGULATOR"] = "Regulator";
     RoleEums["LOGISTICS"] = "Logistics";
     RoleEums["WHOLESALER"] = "Wholesaler";

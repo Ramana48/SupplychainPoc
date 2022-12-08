@@ -32,7 +32,7 @@ export default class ProductsService {
                 ]
             );
 
-            if (!user || user.length === 0 || user[0].role[0].name != RoleEums.SUPPLIER) {
+            if (!user || user.length === 0 || user[0].role[0].name != RoleEums.MANUFACTURER) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.PRODUCT.INVALID_ACCESS, {});
                 return;
             }

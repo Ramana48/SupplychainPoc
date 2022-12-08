@@ -10,8 +10,8 @@ exports.rolesSchema = new mongoose_1.Schema({
     },
     privileges: {
         type: [String],
-        enum: [privileges_enum_1.privilegeEums.SUPPLIED, privileges_enum_1.privilegeEums.MANUFACTUREDANDSHIPPED, privileges_enum_1.privilegeEums.CHECKEDANDREGULATED, privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT, privileges_enum_1.privilegeEums.RECEIVEDANDSTOCKED, privileges_enum_1.privilegeEums.CHECKEDANDVERIFIED, privileges_enum_1.privilegeEums.CHECKEDANDBOUGHT, privileges_enum_1.privilegeEums.OTHER],
-        default: [privileges_enum_1.privilegeEums.SUPPLIED]
+        enum: [privileges_enum_1.privilegeEums.RECEIVED, privileges_enum_1.privilegeEums.MANUFACTUREDANDSHIPPED, privileges_enum_1.privilegeEums.CHECKEDANDREGULATED, privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT, privileges_enum_1.privilegeEums.RECEIVEDANDSTOCKED, privileges_enum_1.privilegeEums.CHECKEDANDVERIFIED, privileges_enum_1.privilegeEums.CHECKEDANDBOUGHT, privileges_enum_1.privilegeEums.OTHER],
+        default: [privileges_enum_1.privilegeEums.MANUFACTUREDANDSHIPPED]
     },
     createdDate: {
         type: Date,

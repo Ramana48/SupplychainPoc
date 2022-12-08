@@ -18,18 +18,24 @@ export default class BatchesController {
 
   async changeStatus(req: Request, res: Response) {
     if (req.get('userId').length === 0) {
-      return res.status(400).send({ code: 0, message: 'UserId value should not be empty', data:{} });
+      return res.status(400).send({ code: 0, message: 'UserId value should not be empty', data: {} });
     }
-    
+
     const batches = await batchesService.changeStatus(req, res);
     return res.json(batches);
   }
 
   async fetchBatches(req: Request, res: Response) {
     if (req.get('userId').length === 0) {
-      return res.status(400).send({ code: 0, message: 'UserId value should not be empty', data:{} });
+      return res.status(400).send({ code: 0, message: 'UserId value should not be empty', data: {} });
     }
     const batches = await batchesService.fetchAllBatches(req, res);
+    return res.json(batches);
+  }
+
+  async fetchBatchByProduct(req: Request, res: Response) {
+
+    const batches = await batchesService.fetchBatchDetailsByProductId(req, res);
     return res.json(batches);
   }
 }
