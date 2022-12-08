@@ -66,7 +66,7 @@ export default class BatchesService {
 
             const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                 headers: {
-                    'user-role': 'supplier',
+                    'user-role': 'manufacturer',
                 }
             });
             if (!apiResp || apiResp === null || apiResp?.status != 200) {
