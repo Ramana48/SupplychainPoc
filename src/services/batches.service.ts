@@ -160,6 +160,14 @@ export default class BatchesService {
 
             const previousBatch = await Batches.findById({ _id: ObjectId(req.params.batchId) });
 
+            
+
+            if(previousBatch.status==="rejected"){
+                let rejectedby =previousBatch.rejectedByName
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ",rejectedby), {});
+                return;
+            }
+
             const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
                 $set: input
             }, { new: true });

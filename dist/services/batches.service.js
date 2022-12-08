@@ -152,6 +152,11 @@ class BatchesService {
                     input['rejectedByName'] = user[0].role[0].name;
                 }
                 const previousBatch = yield batches_1.default.findById({ _id: ObjectId(req.params.batchId) });
+                if (previousBatch.status === "rejected") {
+                    let rejectedby = previousBatch.rejectedByName;
+                    utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ", rejectedby), {});
+                    return;
+                }
                 const update = yield batches_1.default.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
                     $set: input
                 }, { new: true });
