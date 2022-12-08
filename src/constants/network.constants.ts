@@ -74,7 +74,7 @@ export default class Network {
             BATCH_EXISTS: "This user has already initiated a batch for this product id",
             INVALID_USER: "Only manufacturer is authorised to add the product into batch",
             BATCH_REJECTED:"This batch Id is already rejected by",
-            BATCH_COMPLETED:"This batch Id is already deliver to the consumer"
+            BATCH_COMPLETED:"This batch Id is already delivered to the consumer"
 
         },
         PRODUCT: {
