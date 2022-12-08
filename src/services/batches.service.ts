@@ -47,11 +47,14 @@ export default class BatchesService {
 
             if(isBatchExists || isBatchExists!=null){
                 let dbStatus = isBatchExists?.status?.split(" ").join("");
-                console.log('dbStarus::',dbStatus);
-                if(dbStatus != privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("") || dbStatus!="rejected"){
+                
+                if(dbStatus != "rejected"){
+
+                if(dbStatus != privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("")){
                     UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
                     return;
                 }
+            }
             }
 
             const batchResp = await Batches.insertMany([req.body]);

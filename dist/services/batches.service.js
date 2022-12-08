@@ -53,10 +53,11 @@ class BatchesService {
                 });
                 if (isBatchExists || isBatchExists != null) {
                     let dbStatus = (_a = isBatchExists === null || isBatchExists === void 0 ? void 0 : isBatchExists.status) === null || _a === void 0 ? void 0 : _a.split(" ").join("");
-                    console.log('dbStarus::', dbStatus);
-                    if (dbStatus != privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("") || dbStatus != "rejected") {
-                        utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
-                        return;
+                    if (dbStatus != "rejected") {
+                        if (dbStatus != privileges_enum_1.privilegeEums.DSIPATCHEDANDINTRANSIT.split(" ").join("")) {
+                            utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
+                            return;
+                        }
                     }
                 }
                 const batchResp = yield batches_1.default.insertMany([req.body]);
