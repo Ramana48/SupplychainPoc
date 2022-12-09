@@ -1,5 +1,5 @@
 export enum privilegeEums {
-    NEWBATCHADDED = 'New batch added',
+    NEWBATCHADDED = 'new batch added',
     MANUFACTUREDANDSHIPPED = 'manufactured and shipped',
     RECEIVED = 'received',
     CHECKEDANDREGULATED = 'checked and regulated',
