@@ -140,7 +140,7 @@ class BatchesService {
                         }
                     }
                 ]);
-                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.MANUFACTURER) {
+                if (!user || user.length === 0 || user[0].role[0].name === roles_enum_1.RoleEums.TECHNICALUSER) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                     return;
                 }

@@ -143,7 +143,7 @@ export default class BatchesService {
                 ]
             );
                 
-            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.MANUFACTURER) {
+            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.TECHNICALUSER) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                 return;
             }
