@@ -41,6 +41,11 @@ export const batchesSchema: Schema = new Schema({
 	rejectedByName: {
 		type: String
 	},
+	batchId: {
+		type: String,
+		unique: true,
+		required: true
+	},
 	createdDate: {
 		type: Date,
 		default: Date.now

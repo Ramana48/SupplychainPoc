@@ -49,7 +49,8 @@ class BatchesService {
                 }
                 const isBatchExists = yield batches_1.default.findOne({
                     userId: ObjectId(req.body.userId),
-                    products: ObjectId(req.body.products)
+                    products: ObjectId(req.body.products),
+                    batchId: req.body.batchId
                 });
                 if (isBatchExists || isBatchExists != null) {
                     let dbStatus = (_a = isBatchExists === null || isBatchExists === void 0 ? void 0 : isBatchExists.status) === null || _a === void 0 ? void 0 : _a.split(" ").join("");
@@ -62,7 +63,7 @@ class BatchesService {
                 }
                 const batchResp = yield batches_1.default.insertMany([req.body]);
                 let apiInput = req.body;
-                apiInput['_id'] = batchResp[0]._id;
+                apiInput['_id'] = req.body.batchId;
                 apiInput['comment'] = '';
                 const apiResp = yield axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                     headers: {
@@ -101,7 +102,7 @@ class BatchesService {
                     },
                     {
                         $match: {
-                            _id: ObjectId(req.params.batchId)
+                            batchId: req.params.batchId
                         }
                     }
                 ]);
@@ -152,7 +153,7 @@ class BatchesService {
                     input['rejectedById'] = user[0]._id;
                     input['rejectedByName'] = user[0].role[0].name;
                 }
-                const previousBatch = yield batches_1.default.findById({ _id: ObjectId(req.params.batchId) });
+                const previousBatch = yield batches_1.default.findOne({ batchId: req.params.batchId });
                 let dbStatus = (_a = previousBatch === null || previousBatch === void 0 ? void 0 : previousBatch.status) === null || _a === void 0 ? void 0 : _a.split(" ").join("");
                 if (dbStatus === privileges_enum_1.privilegeEums.CHECKEDANDBOUGHT.split(" ").join("")) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_COMPLETED, {});
@@ -163,10 +164,10 @@ class BatchesService {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ", rejectedby), {});
                     return;
                 }
-                const update = yield batches_1.default.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
+                const update = yield batches_1.default.updateOne({ batchId: req.params.batchId }, {
                     $set: input
                 }, { new: true });
-                if (!update || update === null || update.length === 0) {
+                if (!update || update === null) {
                     utility_service_1.default.returnNotFoundException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
                     return;
                 }
@@ -184,13 +185,13 @@ class BatchesService {
                             apiInput[key] = previousBatch[key];
                         }
                     });
-                    const update = yield batches_1.default.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
+                    const update = yield batches_1.default.updateOne({ batchId: req.params.batchId }, {
                         $set: apiInput
                     }, { new: true });
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
                     return;
                 }
-                return update;
+                return yield batches_1.default.findOne({ batchId: req.params.batchId });
             }
             catch (error) {
                 utility_service_1.default.returnDbException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);

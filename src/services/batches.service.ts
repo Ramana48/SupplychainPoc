@@ -42,7 +42,8 @@ export default class BatchesService {
 
             const isBatchExists = await Batches.findOne({
                 userId: ObjectId(req.body.userId),
-                products: ObjectId(req.body.products)
+                products: ObjectId(req.body.products),
+                batchId: req.body.batchId
             });
 
             if(isBatchExists || isBatchExists!=null){
@@ -60,7 +61,7 @@ export default class BatchesService {
             const batchResp = await Batches.insertMany([req.body]);
 
             let apiInput = req.body;
-            apiInput['_id'] = batchResp[0]._id;
+            apiInput['_id'] = req.body.batchId;
             apiInput['comment'] = '';
 
 
@@ -103,7 +104,7 @@ export default class BatchesService {
                     },
                     {
                         $match: {
-                            _id: ObjectId(req.params.batchId)
+                            batchId: req.params.batchId
                         }
                     }
                 ]);
@@ -142,7 +143,7 @@ export default class BatchesService {
                     }
                 ]
             );
-
+                
             if (!user || user.length === 0 || user[0].role[0].name === RoleEums.MANUFACTURER) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                 return;
@@ -158,7 +159,7 @@ export default class BatchesService {
                 input['rejectedByName'] = user[0].role[0].name;
             }
 
-            const previousBatch = await Batches.findById({ _id: ObjectId(req.params.batchId) });
+            const previousBatch = await Batches.findOne({ batchId: req.params.batchId});
 
             let dbStatus = previousBatch?.status?.split(" ").join("");
 
@@ -174,11 +175,11 @@ export default class BatchesService {
                 return;
             }
 
-            const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
+            const update = await Batches.updateOne({ batchId: req.params.batchId }, {
                 $set: input
             }, { new: true });
 
-            if (!update || update === null || update.length === 0) {
+            if (!update || update === null) {
                 UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
                 return;
             }
@@ -201,7 +202,7 @@ export default class BatchesService {
                     }
                 });
 
-                const update = await Batches.findByIdAndUpdate({ _id: ObjectId(req.params.batchId) }, {
+                const update = await Batches.updateOne({ batchId: req.params.batchId }, {
                     $set: apiInput
                 }, { new: true });
 
@@ -209,9 +210,8 @@ export default class BatchesService {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
                 return;
             }
-
-            return update;
-        } catch (error) {
+            return await Batches.findOne({ batchId: req.params.batchId});
+        } catch (error) {            
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
             return;
         }
