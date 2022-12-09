@@ -67,7 +67,7 @@ class BatchesService {
                 apiInput['comment'] = '';
                 const apiResp = yield axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                     headers: {
-                        'user-role': 'technicalUser',
+                        'user-role': 'technicaluser',
                     }
                 });
                 if (!apiResp || apiResp === null || (apiResp === null || apiResp === void 0 ? void 0 : apiResp.status) != 200) {
