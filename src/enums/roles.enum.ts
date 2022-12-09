@@ -1,5 +1,6 @@
 
 export enum RoleEums {
+    TECHNICALUSER='TechnicalUser',
     MANUFACTURER = 'Manufacturer',
     BUILDER = 'Builder',
     REGULATOR = 'Regulator',

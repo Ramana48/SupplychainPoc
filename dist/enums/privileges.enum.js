@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.privilegeEums = void 0;
 var privilegeEums;
 (function (privilegeEums) {
+    privilegeEums["NEWBATCHADDED"] = "New batch added";
     privilegeEums["MANUFACTUREDANDSHIPPED"] = "manufactured and shipped";
     privilegeEums["RECEIVED"] = "received";
     privilegeEums["CHECKEDANDREGULATED"] = "checked and regulated";

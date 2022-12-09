@@ -35,7 +35,7 @@ export default class BatchesService {
                 ]
             );
 
-            if (!user || user.length === 0 || user[0].role[0].name != RoleEums.MANUFACTURER) {
+            if (!user || user.length === 0 || user[0].role[0].name != RoleEums.TECHNICALUSER) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_USER, {});
                 return;
             }
@@ -67,7 +67,7 @@ export default class BatchesService {
 
             const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                 headers: {
-                    'user-role': 'manufacturer',
+                    'user-role': 'technicalUser',
                 }
             });
             if (!apiResp || apiResp === null || apiResp?.status != 200) {
@@ -79,7 +79,6 @@ export default class BatchesService {
 
             return batchResp;
         } catch (error) {
-            console.log('error Resp::', error);
 
             UtilityService.returnDbException(req, res, error.message, error);
             return;

@@ -43,7 +43,7 @@ class BatchesService {
                         }
                     }
                 ]);
-                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.MANUFACTURER) {
+                if (!user || user.length === 0 || user[0].role[0].name != roles_enum_1.RoleEums.TECHNICALUSER) {
                     utility_service_1.default.returnBadRequestException(req, res, constants_1.default.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_USER, {});
                     return;
                 }
@@ -67,7 +67,7 @@ class BatchesService {
                 apiInput['comment'] = '';
                 const apiResp = yield axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
                     headers: {
-                        'user-role': 'manufacturer',
+                        'user-role': 'technicalUser',
                     }
                 });
                 if (!apiResp || apiResp === null || (apiResp === null || apiResp === void 0 ? void 0 : apiResp.status) != 200) {
@@ -78,7 +78,6 @@ class BatchesService {
                 return batchResp;
             }
             catch (error) {
-                console.log('error Resp::', error);
                 utility_service_1.default.returnDbException(req, res, error.message, error);
                 return;
             }

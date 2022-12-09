@@ -69,10 +69,10 @@ export default class Network {
             CHNAGE_STATUS: "Exception while changing status",
             BATCH_NOT_FOUND: "Batch not found",
             FETCH_ALL_BATCH: "Exception while fetching batches",
-            INVALID_ACCESS: "Manufacturer not authorised to change the batch status",
+            INVALID_ACCESS: "Technical-user not authorised to change the batch status",
             UNABLE_TO_PROCESS: "Unable to process batch transaction into blockchain",
             BATCH_EXISTS: "This user has already initiated a batch for this product id",
-            INVALID_USER: "Only manufacturer is authorised to add the product into batch",
+            INVALID_USER: "Only technical-user is authorised to add the product into batch",
             BATCH_REJECTED:"This batch Id is already rejected by",
             BATCH_COMPLETED:"This batch Id is already delivered to the consumer"
 
