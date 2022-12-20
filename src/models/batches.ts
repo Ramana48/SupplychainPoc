@@ -46,6 +46,11 @@ export const batchesSchema: Schema = new Schema({
 		unique: true,
 		required: true
 	},
+	accountId: {
+		type: String,
+		unique: true,
+		required: true
+	},
 	createdDate: {
 		type: Date,
 		default: Date.now

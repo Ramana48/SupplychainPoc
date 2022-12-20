@@ -52,6 +52,9 @@ export default class AuthenticatorMiddleware {
                 body("status")
                     .exists()
                     .withMessage(Constants.NETWORK.VALUES.MISSING_REQUEST_PARAM),
+                body("accountId")
+                    .exists()
+                    .withMessage(Constants.NETWORK.VALUES.MISSING_REQUEST_PARAM),
             ],
             req
         );

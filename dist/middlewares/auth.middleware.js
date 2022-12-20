@@ -51,6 +51,9 @@ class AuthenticatorMiddleware {
                 (0, express_validator_1.body)("status")
                     .exists()
                     .withMessage(constants_1.default.NETWORK.VALUES.MISSING_REQUEST_PARAM),
+                (0, express_validator_1.body)("accountId")
+                    .exists()
+                    .withMessage(constants_1.default.NETWORK.VALUES.MISSING_REQUEST_PARAM),
             ], req);
             if (!errors.length) {
                 return next();

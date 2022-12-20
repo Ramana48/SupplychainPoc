@@ -48,6 +48,11 @@ exports.batchesSchema = new mongoose_1.Schema({
         unique: true,
         required: true
     },
+    accountId: {
+        type: String,
+        unique: true,
+        required: true
+    },
     createdDate: {
         type: Date,
         default: Date.now
