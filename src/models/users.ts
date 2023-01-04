@@ -7,7 +7,7 @@ export const userSchema: Schema = new Schema({
 		required: true
 	},
 	roles: [{
-		type: Schema.Types.ObjectId,
+		type: [Schema.Types.ObjectId],
 		ref: 'Role'
 	}],
 	createdDate: {

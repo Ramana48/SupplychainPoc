@@ -11,6 +11,7 @@ export default class BatchesService {
 
     async addBatch(req, res) {
         req.body['products'] = req.body.productId;
+        req.body['accountId'] = req.body.accountId ? req.body.accountId : "";
         delete req.body.productId;
         try {
             const user = await User.aggregate(
@@ -34,8 +35,10 @@ export default class BatchesService {
                     }
                 ]
             );
-
-            if (!user || user.length === 0 || user[0].role[0].name != RoleEums.TECHNICALUSER) {
+            
+            const exists = await this.checkValueExistsOrNot(user[0].role,RoleEums.TECHNICALUSER);
+            
+            if (!user || user.length === 0 || !exists) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_USER, {});
                 return;
             }
@@ -46,16 +49,16 @@ export default class BatchesService {
                 batchId: req.body.batchId
             });
 
-            if(isBatchExists || isBatchExists!=null){
+            if (isBatchExists || isBatchExists != null) {
                 let dbStatus = isBatchExists?.status?.split(" ").join("");
 
-                if(dbStatus != "rejected"){
+                if (dbStatus != "rejected") {
 
-                if(dbStatus != privilegeEums.CHECKEDANDBOUGHT.split(" ").join("")){
-                    UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
-                    return;
+                    if (dbStatus != privilegeEums.CONSUMED.split(" ").join("")) {
+                        UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_EXISTS, {});
+                        return;
+                    }
                 }
-            }
             }
 
             const batchResp = await Batches.insertMany([req.body]);
@@ -64,19 +67,22 @@ export default class BatchesService {
             apiInput['_id'] = req.body.batchId;
             apiInput['comment'] = '';
 
-
-            const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
-                headers: {
-                    'user-role': 'technicaluser',
+            try {
+                const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/createBatch', apiInput, {
+                    headers: {
+                        'user-role': 'technicaluser',
+                    }
+                });
+                if (!apiResp || apiResp === null || apiResp?.status != 200) {
+                    await Batches.deleteOne({ _id: batchResp[0]._id });
+    
+                    UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
+                    return;
                 }
-            });
-            if (!apiResp || apiResp === null || apiResp?.status != 200) {
-                await Batches.deleteOne({ _id: batchResp[0]._id });
-
-                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
-                return;
+            } catch (error) {
+                console.log('Error::',error);
             }
-
+            
             return batchResp;
         } catch (error) {
 
@@ -142,8 +148,14 @@ export default class BatchesService {
                     }
                 ]
             );
-                
-            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.TECHNICALUSER) {
+
+            if (!user || user.length === 0) {
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.USER.USER_NOT_FOUND, {});
+                return;
+            }
+
+            const exists = await this.checkValueExistsOrNot(user[0].role,RoleEums.TECHNICALUSER);
+            if (exists) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                 return;
             }
@@ -153,31 +165,49 @@ export default class BatchesService {
                 input['comment'] = '';
             }
 
-            if(input.status.toLowerCase() === 'rejected'){
+            if (input.status.toLowerCase() === 'rejected') {
                 input['rejectedById'] = user[0]._id;
                 input['rejectedByName'] = user[0].role[0].name;
             }
 
-            const previousBatch = await Batches.findOne({ batchId: req.params.batchId});
-
+            const previousBatch = await Batches.findOne({ batchId: req.params.batchId });
+            
             let dbStatus = previousBatch?.status?.split(" ").join("");
 
 
-            if(dbStatus === privilegeEums.CHECKEDANDBOUGHT.split(" ").join("")){
+            if (dbStatus === privilegeEums.CONSUMED.split(" ").join("")) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_COMPLETED, {});
                 return;
             }
 
-            if(previousBatch.status==="rejected"){
-                let rejectedby =previousBatch.rejectedByName
-                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ",rejectedby), {});
+            if (previousBatch.status === "rejected") {
+                let rejectedby = previousBatch.rejectedByName
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_REJECTED.concat(" ", rejectedby), {});
+                return;
+            }
+
+            // Fetch consumption number
+            if(input.status === privilegeEums.CONSUMED){
+                const batchConsumpation = await Batches.find({status: privilegeEums.CONSUMED}).sort({consumptionNo: -1}).limit(1);
+                console.log('batchConsumpation:::',batchConsumpation);
+                let consumptionNo = 0;
+                if(batchConsumpation && batchConsumpation.length==0){
+                    consumptionNo = 1;
+                } else {
+                    consumptionNo = batchConsumpation[0].consumptionNo+1;
+                }
+                input['consumptionNo'] = consumptionNo;
+            }
+
+            if(!Object.values(privilegeEums).includes(input.status.toLowerCase())){
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_STATUS, {});
                 return;
             }
 
             const update = await Batches.updateOne({ batchId: req.params.batchId }, {
                 $set: input
             }, { new: true });
-
+            
             if (!update || update === null) {
                 UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
                 return;
@@ -186,31 +216,45 @@ export default class BatchesService {
             let apiInput = req.body;
             apiInput['_id'] = req.params.batchId;
 
-
-            const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/updateBatch', apiInput, {
-                headers: {
-                    'user-role': user[0].role[0].name.toLowerCase(),
-                }
-            });
-
-            if (!apiResp || apiResp === null || apiResp?.status != 200) {
-                let apiInput = input;
-                Object.keys(apiInput).forEach(key => {
-                    if (previousBatch[key]) {
-                        apiInput[key] = previousBatch[key];
+            try {
+                const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/updateBatch', apiInput, {
+                    headers: {
+                        'user-role': user[0].role[0].name.toLowerCase(),
                     }
                 });
-
-                const update = await Batches.updateOne({ batchId: req.params.batchId }, {
-                    $set: apiInput
-                }, { new: true });
-
-
-                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
-                return;
+    
+                if (!apiResp || apiResp === null || apiResp?.status != 200) {
+                    let apiInput = input;
+                    Object.keys(apiInput).forEach(key => {
+                        if (previousBatch[key]) {
+                            apiInput[key] = previousBatch[key];
+                        }
+                    });
+    
+                    const update = await Batches.updateOne({ batchId: req.params.batchId }, {
+                        $set: apiInput
+                    }, { new: true });
+    
+    
+                    UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.UNABLE_TO_PROCESS, {});
+                    return;
+                }
+            } catch (error) {
+                console.log('Error::',error);
             }
-            return await Batches.findOne({ batchId: req.params.batchId});
-        } catch (error) {            
+            
+
+            const _batch = await Batches.findOne({ batchId: req.params.batchId });
+
+            // If consumer then call rebate api
+            if(user[0].role[0].name === RoleEums.BUILDER){
+                const rebateResp = await this.callRebateAPI(_batch);
+            }
+
+            return _batch;
+        } catch (error) {
+            console.log('error::',error);
+            
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
             return;
         }
@@ -243,12 +287,14 @@ export default class BatchesService {
                 ]
             );
 
-            if (!user || user.length === 0 || user[0].role[0].name === RoleEums.MANUFACTURER) {
+            const exists = await this.checkValueExistsOrNot(user[0].role,RoleEums.MANUFACTURER);
+
+            if (!user || user.length === 0 || exists) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_ACCESS, {});
                 return;
             }
 
-            const batches = await Batches.find({ isAllOkay: false, status: {$ne: 'rejected'} });
+            const batches = await Batches.find({ isAllOkay: false, status: { $ne: 'rejected' } });
 
             if (!batches || batches === null || batches.length === 0) {
                 UtilityService.returnNotFoundException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.BATCH_NOT_FOUND, {});
@@ -295,6 +341,43 @@ export default class BatchesService {
         } catch (error) {
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
             return;
+        }
+    }
+
+    private async callRebateAPI(batch){
+        try {
+            const token = `${process.env.REBATE_AUTHORIZATION_USER}:${process.env.REBATE_AUTHORIZATION_PASSWORD}`;
+            const encodedToken = Buffer.from(token).toString('base64');
+            const apiInput = await this.constructInputForConsumptionAPI(batch);
+            
+            const apiResp = await axios.post(process.env.REBATE_API, apiInput, {
+                headers: {
+                    'Authorization': 'Basic ' + encodedToken
+                }
+            });
+            return apiResp;
+        } catch (error) {
+            console.log('Error::',error);
+        }
+    }
+
+    private async constructInputForConsumptionAPI(batch){
+        
+        let obj = {
+            'z_AccountID': batch.accountId,
+            "z_Date": new Date(),
+            "z_RowNum": batch.consumptionNo,
+            "z_ProductID": batch.products[0].toString(),
+            "z_LotID": batch.batchId
+        };
+        return {RebateRelease: obj}
+    }
+
+    private async checkValueExistsOrNot(json, value){
+        for(let a = 0; a< json.length;a++){
+            if(json[a].name.toLowerCase() === value.toLowerCase()){
+                return true;
+            }
         }
     }
 }

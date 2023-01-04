@@ -48,11 +48,19 @@ export const batchesSchema: Schema = new Schema({
 	},
 	accountId: {
 		type: String,
-		required: true
+		default: ''
 	},
 	createdDate: {
 		type: Date,
 		default: Date.now
+	},
+	updatedDate: {
+		type: Date,
+		default: Date.now
+	},
+	consumptionNo:{
+		type: Number,
+		default: 0
 	}
 });
 

@@ -8,8 +8,8 @@ export const rolesSchema: Schema = new Schema({
 	},
 	privileges: {
 		type: [String],
-		enum: [privilegeEums.RECEIVED, privilegeEums.MANUFACTUREDANDSHIPPED, privilegeEums.CHECKEDANDREGULATED, privilegeEums.DSIPATCHEDANDINTRANSIT, privilegeEums.RECEIVEDANDSTOCKED, privilegeEums.CHECKEDANDVERIFIED, privilegeEums.CHECKEDANDBOUGHT, privilegeEums.OTHER],
-		default: [privilegeEums.MANUFACTUREDANDSHIPPED]
+		enum: [privilegeEums.MANUFACTURED, privilegeEums.SHIPPED, privilegeEums.CONSUMED, privilegeEums.OTHER],
+		default: [privilegeEums.MANUFACTURED]
 	},
 	createdDate: {
 		type: Date,
