@@ -215,11 +215,11 @@ export default class BatchesService {
 
             let apiInput = req.body;
             apiInput['_id'] = req.params.batchId;
-
+            const roleName = await this.returnOrg(input.status.toLowerCase());
             try {
                 const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/updateBatch', apiInput, {
                     headers: {
-                        'user-role': user[0].role[0].name.toLowerCase(),
+                        'user-role': roleName,
                     }
                 });
     
@@ -258,6 +258,25 @@ export default class BatchesService {
             UtilityService.returnDbException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.CHNAGE_STATUS, error);
             return;
         }
+    }
+
+    async returnOrg(status) {
+        let org = "";
+        switch(status){
+            case privilegeEums.MANUFACTURED:
+                org = RoleEums.MANUFACTURER
+                break;
+                case privilegeEums.SHIPPED:
+                    org = RoleEums.SHIPPER
+                break;
+                case privilegeEums.CONSUMED:
+                    org = RoleEums.BUILDER
+                break;
+                default:
+                    org = RoleEums.TECHNICALUSER
+                    break;
+        }
+        return org
     }
 
     async fetchAllBatches(req, res) {
