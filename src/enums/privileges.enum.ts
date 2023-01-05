@@ -4,4 +4,5 @@ export enum privilegeEums {
     MANUFACTURED = 'manufactured',
     SHIPPED = 'shipped',
     CONSUMED = 'consumed',
+    REJECTED = 'rejected'
 };
