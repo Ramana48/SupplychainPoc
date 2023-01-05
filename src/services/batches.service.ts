@@ -126,6 +126,7 @@ export default class BatchesService {
     }
 
     async changeStatus(req, res) {
+
         try {
             const user = await User.aggregate(
                 [
@@ -148,7 +149,14 @@ export default class BatchesService {
                     }
                 ]
             );
+            
+            const roleName = req.get('roleName').toLowerCase();
 
+            if(!Object.values(RoleEums).includes(roleName)){
+                UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.BATCH.INVALID_USER_ROLE, {});
+                return;
+            } 
+            
             if (!user || user.length === 0) {
                 UtilityService.returnBadRequestException(req, res, Constants.NETWORK.EXCEPTION_MESSAGES.USER.USER_NOT_FOUND, {});
                 return;
@@ -164,7 +172,6 @@ export default class BatchesService {
             if (input.status.toLowerCase() != privilegeEums.OTHER) {
                 input['comment'] = '';
             }
-            const roleName = await this.returnOrg(input.status.toLowerCase());
 
             if (input.status.toLowerCase() === 'rejected') {
                 input['rejectedById'] = user[0]._id;

@@ -76,6 +76,7 @@ export default class Network {
             BATCH_REJECTED:"This batch Id is already rejected by",
             BATCH_COMPLETED:"This batch Id is already delivered to the builder",
             INVALID_STATUS: "Invalid batch status provided",
+            INVALID_USER_ROLE: "Invalid user role",
 
         },
         PRODUCT: {
