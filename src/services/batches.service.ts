@@ -164,10 +164,11 @@ export default class BatchesService {
             if (input.status.toLowerCase() != privilegeEums.OTHER) {
                 input['comment'] = '';
             }
+            const roleName = await this.returnOrg(input.status.toLowerCase());
 
             if (input.status.toLowerCase() === 'rejected') {
                 input['rejectedById'] = user[0]._id;
-                input['rejectedByName'] = user[0].role[0].name;
+                input['rejectedByName'] = roleName;
             }
 
             const previousBatch = await Batches.findOne({ batchId: req.params.batchId });
@@ -215,7 +216,6 @@ export default class BatchesService {
 
             let apiInput = req.body;
             apiInput['_id'] = req.params.batchId;
-            const roleName = await this.returnOrg(input.status.toLowerCase());
             try {
                 const apiResp = await axios.post(process.env.DEV_SERVER_HOST + '/updateBatch', apiInput, {
                     headers: {
@@ -247,7 +247,7 @@ export default class BatchesService {
             const _batch = await Batches.findOne({ batchId: req.params.batchId });
 
             // If consumer then call rebate api
-            if(user[0].role[0].name === RoleEums.BUILDER){
+            if(roleName === RoleEums.BUILDER){
                 const rebateResp = await this.callRebateAPI(_batch);
             }
 
